@@ -1,14 +1,32 @@
-node {
-      for (i=0; i<2; i++) { 
-           stage "Stage #"+i
-           print 'Hello, world !'
-           if (i==0)
-           {
-               echo 'Running on Stage #0'
-           }
-           else {
-               build 'Declarative pipeline'
-               echo 'Running on Stage #1'
-           }
-      }
+pipeline {
+    agent any
+
+    stages {
+        stage ('Compile Stage') {
+
+            steps {
+                withMaven(maven : 'maven_3_5_0') {
+                    sh 'mvn clean compile'
+                }
+            }
+        }
+
+        stage ('Testing Stage') {
+
+            steps {
+                withMaven(maven : 'maven_3_5_0') {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+
+        stage ('Deployment Stage') {
+            steps {
+                withMaven(maven : 'maven_3_5_0') {
+                    sh 'mvn deploy'
+                }
+            }
+        }
+    }
 }
